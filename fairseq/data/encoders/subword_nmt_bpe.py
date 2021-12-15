@@ -18,7 +18,7 @@ class SubwordNMTBPEConfig(FairseqDataclass):
 
 @register_bpe("subword_nmt", dataclass=SubwordNMTBPEConfig)
 class SubwordNMTBPE(object):
-    def __init__(self, cfg):
+    def __init__(self, cfg, glossaries=None):
         if cfg.bpe_codes is None:
             raise ValueError("--bpe-codes is required for --bpe=subword_nmt")
         codes = file_utils.cached_path(cfg.bpe_codes)
@@ -32,6 +32,8 @@ class SubwordNMTBPE(object):
                     codes,
                     "--separator",
                     cfg.bpe_separator,
+                    "--glossaries",
+                    glossaries
                 ]
             )
             self.bpe = apply_bpe.BPE(
