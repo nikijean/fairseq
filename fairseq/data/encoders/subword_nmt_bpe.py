@@ -41,7 +41,7 @@ class SubwordNMTBPE(object):
                 bpe_args.merges,
                 bpe_args.separator,
                 None,
-                bpe_args.glossaries,
+                glossaries = glossaries,
             )
             self.bpe_symbol = bpe_args.separator + " "
         except ImportError:

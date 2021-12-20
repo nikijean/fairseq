@@ -255,10 +255,7 @@ class GeneratorHubInterface(nn.Module):
             sentence = self.bpe.decode(sentence)
         return sentence
 
-    def binarize(self, sentence: str) -> torch.LongTensor:
-        return self.src_dict.encode_line(sentence, add_if_not_exist=False).long()
-
-    def binarize(self, sentence: str, add_if_not_exist: bool) -> torch.LongTensor:
+    def binarize(self, sentence: str, add_if_not_exist: bool = False) -> torch.LongTensor:
         return self.src_dict.encode_line(sentence, add_if_not_exist=add_if_not_exist).long()
 
     def string(self, tokens: torch.LongTensor) -> str:
