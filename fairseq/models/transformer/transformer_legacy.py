@@ -2,6 +2,7 @@
 #
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+import pdb
 
 from fairseq.dataclass.utils import gen_parser_from_dataclass
 from fairseq.models import (
@@ -134,6 +135,8 @@ class TransformerModel(TransformerModelBase):
 
     @classmethod
     def build_embedding(cls, args, dictionary, embed_dim, path=None):
+        import pdb
+        pdb.set_trace()
         return super().build_embedding(
             TransformerConfig.from_namespace(args), dictionary, embed_dim, path
         )
