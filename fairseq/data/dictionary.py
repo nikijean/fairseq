@@ -409,6 +409,7 @@ class SubDictionary(object):
         )
         self.__dict__ = wrapped_dict.__dict__
         self.wrapped_dict = wrapped_dict
+        self.sub_idx = sub_idx
         self.length = len(self.wrapped_dict) - sub_idx
 
     def __len__(self):
