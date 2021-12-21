@@ -27,8 +27,6 @@ class Dictionary:
         unk="<unk>",
         extra_special_symbols=None,
     ):
-        import pdb
-        pdb.set_trace()
         self.bos_word, self.unk_word, self.pad_word, self.eos_word = bos, unk, pad, eos
         self.symbols = []
         self.count = []
@@ -399,5 +397,24 @@ class TruncatedDictionary(object):
 
     def __getitem__(self, i):
         if i < self.length:
+            return self.wrapped_dict[i]
+        return self.wrapped_dict.unk()
+
+class SubDictionary(object):
+    def __init__(self, wrapped_dict, sub_idx):
+        self.__class__ = type(
+            wrapped_dict.__class__.__name__,
+            (self.__class__, wrapped_dict.__class__),
+            {},
+        )
+        self.__dict__ = wrapped_dict.__dict__
+        self.wrapped_dict = wrapped_dict
+        self.length = len(self.wrapped_dict) - sub_idx
+
+    def __len__(self):
+        return self.length
+
+    def __getitem__(self, i):
+        if i >= self.sub_idx:
             return self.wrapped_dict[i]
         return self.wrapped_dict.unk()

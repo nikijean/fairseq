@@ -135,8 +135,6 @@ class TransformerModel(TransformerModelBase):
 
     @classmethod
     def build_embedding(cls, args, dictionary, embed_dim, path=None):
-        import pdb
-        pdb.set_trace()
         return super().build_embedding(
             TransformerConfig.from_namespace(args), dictionary, embed_dim, path
         )
