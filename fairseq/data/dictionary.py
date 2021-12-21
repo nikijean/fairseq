@@ -27,6 +27,8 @@ class Dictionary:
         unk="<unk>",
         extra_special_symbols=None,
     ):
+        import pdb
+        pdb.set_trace()
         self.bos_word, self.unk_word, self.pad_word, self.eos_word = bos, unk, pad, eos
         self.symbols = []
         self.count = []
