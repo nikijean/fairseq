@@ -116,7 +116,6 @@ def main(args):
                 tgt_dict = build_dictionary([train_path(args.target_lang)], tgt=True)
         else:
             tgt_dict = None
-
     src_dict.save(dict_path(args.source_lang))
     if target and tgt_dict is not None:
         tgt_dict.save(dict_path(args.target_lang))
@@ -156,6 +155,8 @@ def main(args):
                         lang,
                         start_offset,
                         end_offset,
+                        True, #for add_if_not_exist
+
                     ),
                     callback=merge_result,
                 )
@@ -173,6 +174,7 @@ def main(args):
                 lambda t: ds.add_item(t),
                 offset=first_chunk[0],
                 end=first_chunk[1],
+                add_if_not_exist=True,
             )
         )
         if num_workers > 1:
@@ -185,6 +187,9 @@ def main(args):
                 os.remove(indexed_dataset.index_file_path(temp_file_path))
 
         ds.finalize(dataset_dest_file(args, output_prefix, lang, "idx"))
+        logger.info("[{}] Updated Dictionary: {} types".format(lang, len(vocab)))
+        vocab.save(dict_path(lang))
+
 
         logger.info(
             "[{}] {}: {} sents, {} tokens, {:.3}% replaced by {}".format(
@@ -350,7 +355,7 @@ def main(args):
                 print("{} {}".format(src_dict[k], tgt_dict[v]), file=f)
 
 
-def binarize(args, filename, vocab, output_prefix, lang, offset, end, append_eos=True):
+def binarize(args, filename, vocab, output_prefix, lang, offset, end, append_eos=True, add_if_not_exist=False):
     ds = indexed_dataset.make_builder(
         dataset_dest_file(args, output_prefix, lang, "bin"),
         impl=args.dataset_impl,
@@ -361,7 +366,7 @@ def binarize(args, filename, vocab, output_prefix, lang, offset, end, append_eos
         ds.add_item(tensor)
 
     res = Binarizer.binarize(
-        filename, vocab, consumer, append_eos=append_eos, offset=offset, end=end
+        filename, vocab, consumer, append_eos=append_eos, offset=offset, end=end, add_if_not_exist=add_if_not_exist
     )
     ds.finalize(dataset_dest_file(args, output_prefix, lang, "idx"))
     return res

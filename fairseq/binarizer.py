@@ -2,7 +2,6 @@
 #
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-
 from collections import Counter
 from typing import Dict
 
@@ -25,6 +24,7 @@ class Binarizer:
         offset=0,
         end=-1,
         already_numberized=False,
+        add_if_not_exist=False,
     ) -> Dict[str, int]:
         nseq, ntok = 0, 0
         replaced = Counter()
@@ -49,7 +49,7 @@ class Binarizer:
                     ids = dict.encode_line(
                         line=line,
                         line_tokenizer=tokenize,
-                        add_if_not_exist=False,
+                        add_if_not_exist=add_if_not_exist,
                         consumer=replaced_consumer,
                         append_eos=append_eos,
                         reverse_order=reverse_order,
