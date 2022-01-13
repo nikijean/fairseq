@@ -9,6 +9,7 @@ Train a network across multiple GPUs.
 
 import contextlib
 import logging
+import pdb
 import sys
 import time
 from argparse import Namespace
@@ -26,7 +27,7 @@ from fairseq.models.ema import build_ema
 from fairseq.nan_detector import NanDetector
 from fairseq.optim import lr_scheduler
 from omegaconf import OmegaConf
-
+from fairseq.modules.split_embedding import *
 logger = logging.getLogger(__name__)
 
 
@@ -498,12 +499,19 @@ class Trainer(object):
                 )
                 if self.data_parallel_rank > 0:
                     last_optim_state = state.get("last_optimizer_state", None)
-
             # load model parameters
             try:
                 self.model.load_state_dict(
                     state["model"], strict=True, model_cfg=self.cfg.model
                 )
+                #TODO: load embed_tokens here?
+
+                if self.cfg.model.split_embeddings > 0:
+                    pdb.set_trace()
+                    num_extra_embeddings = self.cfg.model.split_embeddings
+                    split_embeddings = SplitEmbedding(self.model.encoder.embed_tokens, num_extra_embeddings)
+                    self.model.encoder.embed_tokens = split_embeddings
+                pdb.set_trace()
                 # save memory for later steps
                 del state["model"]
                 if utils.has_parameters(self.get_criterion()):

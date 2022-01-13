@@ -88,6 +88,10 @@ class TransformerModel(TransformerModelBase):
         gen_parser_from_dataclass(
             parser, TransformerConfig(), delete_default=True, with_prefix=""
         )
+        parser.add_argument('--split-embeddings',
+                            type=int,
+                            default=0,
+                            help='number of extra embeddings to use')
 
     @classmethod
     def build_model(cls, args, task):
@@ -253,6 +257,21 @@ def transformer_vaswani_wmt_en_de_big(args):
     args.dropout = getattr(args, "dropout", 0.3)
     base_architecture(args)
 
+# parameters used in the "Attention Is All You Need" paper (Vaswani et al., 2017)
+@register_model_architecture("transformer", "transformer_vaswani_wmt_en_de_big_split")
+def transformer_vaswani_wmt_en_de_big_split(args):
+    args.split_embeddings = getattr(args, "split_embeddings", 22)
+    args.encoder_embed_dim = getattr(args, "encoder_embed_dim", 1024)
+    args.encoder_ffn_embed_dim = getattr(args, "encoder_ffn_embed_dim", 4096)
+    args.encoder_attention_heads = getattr(args, "encoder_attention_heads", 16)
+    args.encoder_normalize_before = getattr(args, "encoder_normalize_before", False)
+    args.decoder_embed_dim = getattr(args, "decoder_embed_dim", 1024)
+    args.decoder_ffn_embed_dim = getattr(args, "decoder_ffn_embed_dim", 4096)
+    args.decoder_attention_heads = getattr(args, "decoder_attention_heads", 16)
+    args.dropout = getattr(args, "dropout", 0.3)
+    base_architecture(args)
+
+
 
 @register_model_architecture("transformer", "transformer_vaswani_wmt_en_fr_big")
 def transformer_vaswani_wmt_en_fr_big(args):
@@ -265,6 +284,10 @@ def transformer_wmt_en_de_big(args):
     args.attention_dropout = getattr(args, "attention_dropout", 0.1)
     transformer_vaswani_wmt_en_de_big(args)
 
+@register_model_architecture("transformer", "transformer_wmt_en_de_big_split")
+def transformer_wmt_en_de_big_split(args):
+    args.attention_dropout = getattr(args, "attention_dropout", 0.1)
+    transformer_vaswani_wmt_en_de_big_split(args)
 
 # default parameters used in tensor2tensor implementation
 @register_model_architecture("transformer", "transformer_wmt_en_de_big_t2t")

@@ -19,22 +19,26 @@ def build_embedding( dictionary, embed_dim):
     return emb
 
 def main():
-    en2de = torch.hub.load('nikijean/fairseq:main', 'transformer.wmt16.en-de', tokenizer='moses', bpe='subword_nmt')
-    initial_dict_length = len(en2de.src_dict)
-    new_bpe = bpe.SubwordNMTBPE(en2de.cfg['bpe'], glossaries=["snorflblab", "barflbla"])
-    en2de.bpe = new_bpe
+    #mbart.CC25
+    #translation_model = torch.hub.load('nikijean/fairseq:main', 'mbart.CC25', tokenizer='moses', bpe='subword_nmt')
+
+    translation_model = torch.hub.load('nikijean/fairseq:main', 'transformer.wmt16.en-de', tokenizer='moses', bpe='subword_nmt')
+    initial_dict_length = len(translation_model.src_dict)
+    new_bpe = bpe.SubwordNMTBPE(translation_model.cfg['bpe'], glossaries=["snorflblab", "barflbla"])
+    translation_model.bpe = new_bpe
     pdb.set_trace()
     #TODO: we actually need to update the src_dict from file, rather than doing it this way.
     #setting the second argument to True forces the word to be addesd to the dictionary.
-    encoded_result = en2de.encode("I am a snorflblab barflbla", True) #True adds new word to src_dict if it's not there
+    encoded_result = translation_model.encode("I am a snorflblab barflbla", True) #True adds new word to src_dict if it's not there
 
 
-    num_embeddings = len(en2de.src_dict) - initial_dict_length + 1 #plus one for the 0 embedding
+    num_embeddings = len(translation_model.src_dict) - initial_dict_length + 1 #plus one for the 0 embedding
+    #TODO: second argument to Embedding should not be hard-coded
     new_embeddings = Embedding(num_embeddings, 1024)
 
-    split_embeddings = SplitEmbedding(en2de.models[0].encoder.embed_tokens, new_embeddings)
-    en2de.models[0].encoder.embed_tokens = split_embeddings
-    result = en2de.translate("Hello world")
+    split_embeddings = SplitEmbedding(translation_model.models[0].encoder.embed_tokens, new_embeddings)
+    translation_model.models[0].encoder.embed_tokens = split_embeddings
+    result = translation_model.translate("Hello world")
 
 if __name__ == "__main__":
     main()
