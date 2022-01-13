@@ -123,7 +123,7 @@ def main(args):
     if args.dict_only:
         return
 
-    def make_binary_dataset(vocab, input_prefix, output_prefix, lang, num_workers):
+    def make_binary_dataset(vocab, input_prefix, output_prefix, lang, num_workers, expand_dict):
         logger.info("[{}] Dictionary: {} types".format(lang, len(vocab)))
         n_seq_tok = [0, 0]
         replaced = Counter()
@@ -155,7 +155,7 @@ def main(args):
                         lang,
                         start_offset,
                         end_offset,
-                        True, #for add_if_not_exist
+                        expand_dict,
 
                     ),
                     callback=merge_result,
@@ -174,7 +174,7 @@ def main(args):
                 lambda t: ds.add_item(t),
                 offset=first_chunk[0],
                 end=first_chunk[1],
-                add_if_not_exist=True,
+                add_if_not_exist=expand_dict,
             )
         )
         if num_workers > 1:
@@ -189,7 +189,6 @@ def main(args):
         ds.finalize(dataset_dest_file(args, output_prefix, lang, "idx"))
         logger.info("[{}] Updated Dictionary: {} types".format(lang, len(vocab)))
         vocab.save(dict_path(lang))
-
 
         logger.info(
             "[{}] {}: {} sents, {} tokens, {:.3}% replaced by {}".format(
@@ -258,7 +257,7 @@ def main(args):
 
         logger.info("[alignments] {}: parsed {} alignments".format(input_file, nseq[0]))
 
-    def make_dataset(vocab, input_prefix, output_prefix, lang, num_workers=1):
+    def make_dataset(vocab, input_prefix, output_prefix, lang, num_workers=1, expand_dict=False):
         if args.dataset_impl == "raw":
             # Copy original text file to destination folder
             output_text_file = dest_path(
@@ -267,11 +266,11 @@ def main(args):
             )
             shutil.copyfile(file_name(input_prefix, lang), output_text_file)
         else:
-            make_binary_dataset(vocab, input_prefix, output_prefix, lang, num_workers)
+            make_binary_dataset(vocab, input_prefix, output_prefix, lang, num_workers, expand_dict)
 
     def make_all(lang, vocab):
         if args.trainpref:
-            make_dataset(vocab, args.trainpref, "train", lang, num_workers=args.workers)
+            make_dataset(vocab, args.trainpref, "train", lang, num_workers=args.workers, expand_dict=args.expand_dict)
         if args.validpref:
             for k, validpref in enumerate(args.validpref.split(",")):
                 outprefix = "valid{}".format(k) if k > 0 else "valid"
