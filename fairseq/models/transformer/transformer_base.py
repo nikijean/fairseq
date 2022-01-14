@@ -2,7 +2,7 @@
 #
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-
+import pdb
 from typing import Dict, List, Optional, Tuple
 
 import torch
@@ -86,7 +86,7 @@ class TransformerModelBase(FairseqEncoderDecoderModel):
             cfg.share_decoder_input_output_embed = True
         else:
             encoder_embed_tokens = cls.build_embedding(
-                cfg, src_dict, cfg.encoder.embed_dim, cfg.encoder.embed_path
+                cfg, src_dict, cfg.encoder.embed_dim, cfg.encoder.embed_path, True
             )
             decoder_embed_tokens = cls.build_embedding(
                 cfg, tgt_dict, cfg.decoder.embed_dim, cfg.decoder.embed_path
@@ -102,8 +102,11 @@ class TransformerModelBase(FairseqEncoderDecoderModel):
         return cls(cfg, encoder, decoder)
 
     @classmethod
-    def build_embedding(cls, cfg, dictionary, embed_dim, path=None):
-        num_embeddings = len(dictionary)
+    def build_embedding(cls, cfg, dictionary, embed_dim, path=None, is_encoder=None):
+        if is_encoder == True:
+            num_embeddings = len(dictionary) - cfg.split_embeddings
+        else:
+            num_embeddings = len(dictionary)
         padding_idx = dictionary.pad()
 
         emb = Embedding(num_embeddings, embed_dim, padding_idx)

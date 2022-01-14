@@ -138,9 +138,9 @@ class TransformerModel(TransformerModelBase):
         return super().build_model(cfg, task)
 
     @classmethod
-    def build_embedding(cls, args, dictionary, embed_dim, path=None):
+    def build_embedding(cls, args, dictionary, embed_dim, path=None, is_encoder=None):
         return super().build_embedding(
-            TransformerConfig.from_namespace(args), dictionary, embed_dim, path
+            TransformerConfig.from_namespace(args), dictionary, embed_dim, path, is_encoder
         )
 
     @classmethod
