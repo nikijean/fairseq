@@ -2,12 +2,11 @@
 import torch.nn as nn
 
 
-
 class SplitEmbedding(nn.Module):
     def __init__(self, embeddings_one, num_extra_embeddings):
         super().__init__()
         self.embeddings_one = embeddings_one
-        self.embeddings_two = self.create_extra_embedding(num_extra_embeddings)
+        self.embeddings_two = self.create_extra_embedding(num_extra_embeddings + 1)
         self.embeddings_one_vocab_size = self.embeddings_one.num_embeddings
 
     def create_extra_embedding(self, num_embeddings, other_idx=0):

@@ -136,6 +136,7 @@ def main(args):
         input_file = "{}{}".format(
             input_prefix, ("." + lang) if lang is not None else ""
         )
+
         offsets = find_offsets(input_file, num_workers)
         (first_chunk, *more_chunks) = zip(offsets, offsets[1:])
         pool = None
@@ -268,9 +269,9 @@ def main(args):
         else:
             make_binary_dataset(vocab, input_prefix, output_prefix, lang, num_workers, expand_dict)
 
-    def make_all(lang, vocab):
+    def make_all(lang, vocab, expand_dict=False):
         if args.trainpref:
-            make_dataset(vocab, args.trainpref, "train", lang, num_workers=args.workers, expand_dict=args.expand_dict)
+            make_dataset(vocab, args.trainpref, "train", lang, num_workers=args.workers, expand_dict=expand_dict)
         if args.validpref:
             for k, validpref in enumerate(args.validpref.split(",")):
                 outprefix = "valid{}".format(k) if k > 0 else "valid"
@@ -302,7 +303,7 @@ def main(args):
                 num_workers=args.workers,
             )
 
-    make_all(args.source_lang, src_dict)
+    make_all(args.source_lang, src_dict, args.expand_dict)
     if target:
         make_all(args.target_lang, tgt_dict)
     if args.align_suffix:

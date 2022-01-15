@@ -9,7 +9,6 @@ Train a network across multiple GPUs.
 
 import contextlib
 import logging
-import pdb
 import sys
 import time
 from argparse import Namespace
@@ -507,11 +506,9 @@ class Trainer(object):
                 #TODO: load embed_tokens here?
 
                 if self.cfg.model.split_embeddings > 0:
-                    pdb.set_trace()
                     num_extra_embeddings = self.cfg.model.split_embeddings
                     split_embeddings = SplitEmbedding(self.model.encoder.embed_tokens, num_extra_embeddings)
                     self.model.encoder.embed_tokens = split_embeddings
-                pdb.set_trace()
                 # save memory for later steps
                 del state["model"]
                 if utils.has_parameters(self.get_criterion()):
