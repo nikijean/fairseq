@@ -1,0 +1,14 @@
+Soy doctor.
+Soy doctora.
+Soy niñera.
+Soy niñero.
+Soy acricultor.
+Soy agricultora.
+Soy director.
+Soy directora.
+Soy ingeniera.
+Soy ingeniero.
+Soy enfermera.
+Soy enfermero.
+Soy fontanero.
+Soy fontanera.
