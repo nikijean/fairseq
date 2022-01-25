@@ -16,7 +16,6 @@ from itertools import chain
 from typing import Any, Dict, List
 
 import torch
-import pdb
 from fairseq import checkpoint_utils, models, optim, utils
 from fairseq.dataclass.configs import FairseqConfig
 from fairseq.dataclass.utils import convert_namespace_to_omegaconf
@@ -504,7 +503,6 @@ class Trainer(object):
                 self.model.load_state_dict(
                     state["model"], strict=True, model_cfg=self.cfg.model
                 )
-                #TODO: load embed_tokens here?
 
                 if self.cfg.model.split_embeddings > 0:
                     num_extra_embeddings = self.cfg.model.split_embeddings
