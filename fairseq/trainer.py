@@ -16,6 +16,7 @@ from itertools import chain
 from typing import Any, Dict, List
 
 import torch
+import pdb
 from fairseq import checkpoint_utils, models, optim, utils
 from fairseq.dataclass.configs import FairseqConfig
 from fairseq.dataclass.utils import convert_namespace_to_omegaconf
@@ -26,7 +27,7 @@ from fairseq.models.ema import build_ema
 from fairseq.nan_detector import NanDetector
 from fairseq.optim import lr_scheduler
 from omegaconf import OmegaConf
-from fairseq.modules.split_embedding import *
+from fairseq.modules.split_embedding import SplitEmbedding
 logger = logging.getLogger(__name__)
 
 
@@ -509,6 +510,12 @@ class Trainer(object):
                     num_extra_embeddings = self.cfg.model.split_embeddings
                     split_embeddings = SplitEmbedding(self.model.encoder.embed_tokens, num_extra_embeddings)
                     self.model.encoder.embed_tokens = split_embeddings
+                    for n, p in self.model.named_parameters():
+                        if n == "encoder.embed_tokens.embeddings_two.weight":
+                            p.requires_grad = True
+                        else:
+                            p.requires_grad = True
+
                 # save memory for later steps
                 del state["model"]
                 if utils.has_parameters(self.get_criterion()):
